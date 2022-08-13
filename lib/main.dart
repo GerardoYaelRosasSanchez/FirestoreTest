@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -47,6 +50,8 @@ class MyApp extends StatelessWidget {
           }
           // Revisa si la instancia de Firebase se recupero exitosamente.  
           else if (snapshot.hasData){
+            DatabaseReference _testRef = FirebaseDatabase.instance.ref().child("test");
+            _testRef.set("Testing ${Random().nextInt(100)}"); 
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Material App Bar'),
@@ -64,10 +69,6 @@ class MyApp extends StatelessWidget {
           }
         },   
       ),
-      
-
-      
-      
     );
   }
 }

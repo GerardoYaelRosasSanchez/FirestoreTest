@@ -45,3 +45,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Archivo que cambia cada vez que se cambia de rama.
+# Desconosco si es necesario, considerar que se tiene que eliminar gitignore en algun futuro.
+ macos/Flutter/GeneratedPluginRegistrant.swift
+

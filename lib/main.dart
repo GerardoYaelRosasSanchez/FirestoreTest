@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,23 +23,38 @@ class MyApp extends StatelessWidget {
 
   // Future representa un posible valor que será disponible en el futuro.
     // En este caso vera si se logro recuperar la instancia de Firebase. 
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(); 
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
+
 
   @override
   Widget build(BuildContext context) {
+
+    // Actualizar la información que agrega el usuario al Text field.
+    final controller = TextEditingController(); 
+
     return MaterialApp(
       title: 'Material App',
-      /*
       home: Scaffold(
-        appBar: AppBar(
-        title: const Text('Material App Bar'),
-      ),
-      body: const Center(
-        child: Text('Conexión exitosa.'),
-      ),
-      ),
-      */ 
+          appBar: AppBar(
+          title: TextField(controller: controller),
+          actions: [
+            IconButton(
+              onPressed: () {
 
+                final first = controller.text; 
+                createUser(first: first); 
+
+              }, 
+              icon: Icon(Icons.add), 
+            )
+          ],
+        ),
+      )
+
+
+
+
+      /*
       // FutureBuilder Ayuda a determinar el estado del Future y que mostrar si aún esta cargando. 
       home: FutureBuilder(
         future: _fbApp, // Que futuro voy a estar monitoreando
@@ -49,8 +66,19 @@ class MyApp extends StatelessWidget {
           }
           // Revisa si la instancia de Firebase se recupero exitosamente.  
           else if (snapshot.hasData){
+            // Guardar información en Realtime database.
             DatabaseReference _testRef = FirebaseDatabase.instance.ref().child("test");
             _testRef.set("Testing ${Random().nextInt(100)}"); 
+            
+            // Guardar información en Cloud Firestore.
+            /*
+            _fbFirestore.collection("users").add(user).then((DocumentReference doc) =>
+            print('DocumentSnapshot added with ID: ${doc.id}')); 
+            _fbFirestore.collection("users").add(user2).then((DocumentReference doc) =>
+            print('DocumentSnapshot added with ID: ${doc.id}'));
+            */
+
+
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Material App Bar'),
@@ -68,6 +96,47 @@ class MyApp extends StatelessWidget {
           }
         },   
       ),
+      */
+    
     );
   }
+
+
+  // Función ayncrona.
+    // Una función asyncrona crea un thread para correr la parte del código que esta
+    // esperando respuesta y la parte del código que no require esperar respuesta.
+    // Se puede usar await que menciona que promete una respuesta en el futuro y se
+    // puede utilizar then si es obligatorio recibir una respuesta para continuar.
+
+  // Clase Future.
+    // Un futuro representa el resultado de una operación asyncrona y puede tener dos estados:
+    // Completado o incompleto.
+    // Incompleto espera a que la función regrese un error o o termine la operación.
+    // Completo: Future completa el valor que se esta esperando o regresa un error.
+    // Future dice que se regresará un valor de tipo Future en la función.
+    // Si no regresa un valor. Por default regresa Future<void>
+  Future createUser({required String first}) async {
+
+    final docUser = FirebaseFirestore.instance.collection("users").doc('my-id'); 
+
+    // Crear ususarios de prueba.
+    final user = <String, dynamic> {
+      "first": first,
+      "last": "Rosas",
+      "born": "2000" 
+    }; 
+
+    final user2 = <String, dynamic>{
+      "first": "Raul",
+      "middle": "Ignacio",
+      "last": "Espinal",
+      "born": 2000
+    };
+
+    // Await espera a que el futuro sea completado. 
+    // En este caso espera a que se inserten los valores en la base de datos.
+    await docUser.set(user2);
+
+  }
+
 }

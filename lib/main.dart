@@ -101,7 +101,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-
   // Función ayncrona.
     // Una función asyncrona crea un thread para correr la parte del código que esta
     // esperando respuesta y la parte del código que no require esperar respuesta.
@@ -117,9 +116,16 @@ class MyApp extends StatelessWidget {
     // Si no regresa un valor. Por default regresa Future<void>
   Future createUser({required String first}) async {
 
+    // .instance crea una instancia de la base de datos en Firestore.
+    // .collection menciona en que colección se agregara la información.
+      // La conexión tiene que existir para agregar la información.
+    // .doc menciona en que documento se agregara la información.
+      // El id es utilizado para identificar el document, en este caso my-id. 
+      // Si no se agrega nada en .doc el ID se generara automáticamente.
     final docUser = FirebaseFirestore.instance.collection("users").doc('my-id'); 
 
     // Crear ususarios de prueba.
+
     final user = <String, dynamic> {
       "first": first,
       "last": "Rosas",
@@ -132,11 +138,79 @@ class MyApp extends StatelessWidget {
       "last": "Espinal",
       "born": 2000
     };
+    // Como otra opción tambien se pueden utizar objetos de tipo user.
+
 
     // Await espera a que el futuro sea completado. 
     // En este caso espera a que se inserten los valores en la base de datos.
-    await docUser.set(user2);
+      // Aquí se inserta la información mencionada en el documento.
+      // Si la llave no existe se crea y si ya existe se modifica.
+    await docUser.set(user) ;
+
+    // Instancia para probar la implementación de objetos.
+      // .doc como no tiene datos, se genera automáticamente.
+    final docUser2 = FirebaseFirestore.instance.collection("users").doc(); 
+
+    // Creo mi objeto de tipo usuario.
+    final objectUser = User(
+      // docUser.id guarda el id utilizado en el documento.
+      // Nos permite acceder al id generado por el documento.
+      id: docUser2.id,
+      first: first,
+      last: "Rosas",
+      born: "2007",
+    );
+
+    // Combertir la información del objeto a formato Json. 
+    final userToJson = objectUser.toJson();
+
+    // Subir la información a la base de datos. 
+    await docUser2.set(userToJson);
 
   }
 
+}
+
+class User {
+  String? id;
+  String? first;
+  String? last;
+  String? born;
+
+  User({
+    this.id = '',
+    required this.first,
+    required this.last,
+    required this.born,
+  });
+
+  // Convierte la información en 
+  Map<String, dynamic> toJson() => {
+
+    "id": id,
+    "first": first,
+    "last": last,
+    "born": born, 
+  };
+
+  /*
+  User.fromJson(Map<String, dynamic> json){
+    id = json['id'];
+    first = json['first'];
+    last = json['last'];
+    born = json['born'];
+  }
+
+  Map<String, dynamic> toJson() {
+
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+
+    data['id'] = this.id;
+    data['first'] = this.first;
+    data['last'] = this.last;
+    data['born'] = this.born;
+
+    return data;
+  }
+  */
 }

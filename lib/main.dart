@@ -48,6 +48,19 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  // Lambda or Arrow function in Dart.
+    // Return a value of an expressión.
+    // Only one value can be returned. 
+  // Stream
+    // Igual que future, espera hasta recibir información, pero a diferencia del Future
+    // stream puede recibir im error o un grupo de información. 
+    // Funciona esperando información, cuando llega la pasa al código y espera al siguiente
+    // lote para después pasarlo al código.
+  Stream<List<User>> readUser() => FirebaseFirestore.instance.collection("users")
+  .snapshots()
+  .map((snapshot) => 
+  snapshot.docs.map((doc) => User.fromJson(doc.data())).toList());
+
   // Agregar usuario a la base de datos.
   Future createUser({required String first}) async {
 
